@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  /* color: white; */
+}
+body {
+  height: 100%;
+  width: 100%;
+  background-image: url("./images/nathan-dumlao-6VhPY27jdps-unsplash.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#main {
+  /* height: 60vh; */
+  width: 40vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5vw auto;
+  border: 2px solid black;
+  /* background-color: whitesmoke; */
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 10px 2px white;
+}
+#logo {
+  margin-bottom: 1vw;
+  margin-left: 2vw;
+}
+#cafeicon {
+  height: 5vw;
+  width: 5vw;
+  margin-left: 8vw;
+  margin-top: 2vw;
+}
+#yourcafe {
+  font-size: 1.6vw;
+  margin-left: 7vw;
+}
+
+form h1 {
+  text-align: center;
+  /* margin-top: 1vh; */
+  margin-bottom: 2vw;
+  color: black;
+}
+
+form input {
+  outline: none;
+  border: none;
+  border-bottom: 2px solid black;
+  width: 15vw;
+  font-size: 1.2vw;
+  background: transparent;
+}
+
+#username,
+#password {
+  font-size: 1.2vw;
+  margin-bottom: 3vw;
+  /* margin: 1vw; */
+}
+
+#username,
+#password label {
+  margin-right: 1.5vw;
+}
+#username,
+#password {
+  margin-bottom: 4vw;
+}
+
+#submit {
+  background: white;
+  font-size: 1.6vw;
+  height: 3vw;
+  width: 22vw;
+  margin-top: 1vw;
+  margin-bottom: 0.8vw;
+  margin-left: 1vw;
+  color: black;
+  padding: 0.8vw auto;
+  border-color: white;
+  border-radius: 10px;
+}
+
+#registerLink {
+  font-weight: 500;
+  color: white;
+  /* margin-left: 6.5vw; */
+  margin-left: 4vw;
+  margin-bottom: 3vw;
+}
+#registerLink a {
+  font-size: 1.2vw;
+  text-decoration: none;
+  color: aqua;
+}
+
+.error {
+  font-size: 1.2vw;
+  display: block;
+  color: red;
+}

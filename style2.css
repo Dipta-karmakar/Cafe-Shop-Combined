@@ -1,0 +1,141 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  /* color: white; */
+}
+body {
+  height: 100%;
+  width: 100%;
+  background-color: #dadada;
+  background-image: url("./images/michal-parzuchowski-ItaV89TNkks-unsplash.jpg");
+  background-blend-mode: multiply;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#main {
+  /* height: 60vh; */
+  width: 50vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2vw auto;
+  border: 2px solid black;
+  box-shadow: 0 0 30px white;
+  /* background-color: rgba(156, 112, 16, 0.2);  */
+  /* background-color: rgba(162, 126, 47, 0.386); */
+  backdrop-filter: blur(15px);
+}
+
+#right_div label {
+  margin-left: 1vw;
+}
+#left_div img {
+  width: 20vw;
+  height: 25vw;
+  border-radius: 10px;
+}
+
+#cafeicon {
+  height: 5vw;
+  width: 5vw;
+  margin-left: 8vw;
+  margin-top: 2vw;
+}
+#yourcafe {
+  font-size: 1.6vw;
+  margin-left: 7vw;
+}
+form h1 {
+  text-align: center;
+  margin-top: 2vh;
+  margin-bottom: 2vw;
+  color: black;
+}
+
+form input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid black; /* single bar */
+  outline: none; /* remove highlight when clicked */
+  width: 200px;
+  /* font-size: 16px; */
+  font-size: 1.3vw;
+  padding: 5px;
+}
+
+#username,
+#password,
+#Cpassword,
+#email {
+  margin-bottom: 2vw;
+  /* margin: 1vw; */
+}
+#Cpassword label {
+  font-size: 1.2vw;
+  margin-bottom: 10vw;
+}
+
+#username,
+#password,
+#Cpassword,
+#email label {
+  font-size: 1.3vw;
+  margin-right: 1.5vw;
+}
+
+#email label {
+  margin-right: 3.5vw;
+}
+
+/* #username input {
+  height: 2vw;
+  width: 15vw;
+  border-radius: 10px;
+  border-color: white;
+  color: black;
+  font-size: 1vw;
+  background: transparent;
+} */
+/* #password input {
+  height: 2vw;
+  width: 15vw;
+  border-radius: 10px;
+  border-color: white;
+}
+#email input {
+  height: 2vw;
+  width: 15vw;
+  border-radius: 10px;
+  border-color: white;
+  margin-left: 2vw;
+} */
+
+#submit {
+  background: rgb(255, 255, 255);
+  font-size: 1.2vw;
+  font-weight: 700;
+  height: 3.5vw;
+  width: 17vw;
+  margin-bottom: 2vw;
+  margin-left: 5vw;
+  color: black;
+  padding: 0.8vw auto;
+  /* border-radius: 10px; */
+  border: none;
+  /* display: block;
+  text-align: center; */
+}
+
+p {
+  color: white;
+  margin-left: 6.5vw;
+  margin-bottom: 3vw;
+}
+
+.error {
+  display: block;
+  color: red;
+  font-size: 1vw;
+}
