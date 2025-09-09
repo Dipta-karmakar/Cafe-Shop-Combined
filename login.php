@@ -36,7 +36,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // ✅ redirect by type
                 if ($row["type"] === "admin") {
-                    header("Location: dashboard.php");
+                    header("Location: admin/dashboard.php");
+
+
+
                 } elseif ($row["type"] === "employee") {
                     header("Location: employee_dashboard.php");
                 } else {

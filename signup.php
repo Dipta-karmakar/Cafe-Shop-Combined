@@ -4,7 +4,7 @@ session_start();
 $servername = "localhost";
 $dbusername = "root";   // DB username
 $dbpassword = "";       // DB password
-$dbname = "user_db";    // DB name
+$dbname = "cafe_db";    // DB name
 
 $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 if ($conn->connect_error) {
@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // hash password before storing
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("INSERT INTO users(username, password, email) VALUES (?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO all_users(username, password, email) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $username, $hashedPassword, $email);
 
         if ($stmt->execute()) {
@@ -166,7 +166,17 @@ function sanitizeInput($data) {
                     <span class=" error"><?php echo $errors["email"]; ?></span>
                     <?php endif; ?>
                 </div>
+
+
+
+
+                //dropdown
+
+
                 <input type="submit" id="submit" name="submit" value="Register">
+
+
+
 
             </form>
         </div>
