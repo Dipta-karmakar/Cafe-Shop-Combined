@@ -51,8 +51,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
             <ul>
                 <li>
                     <a href="#">
-                        <img style="width: 80px;" src="../images/08052021-05_generated-removebg-preview.png"
-                            alt="Cozy Cafe">
+                        <img style="width:60px;height:auto" src="../icon/cafe.png" alt="Cozy Cafe">
                         <P style="font-size: 1.8rem; margin-top: 1.2rem;"><span class="title">Cozy Cafe</span></P>
 
                     </a>

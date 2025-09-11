@@ -32,7 +32,8 @@ body {
   position: fixed;
   width: 300px;
   height: 100%;
-  background: var(--blue);
+  /* background: var(--blue); */
+  background: chocolate;
   border-left: 10px solid var(--blue);
   transition: 0.5s;
   overflow: hidden;
@@ -53,8 +54,8 @@ body {
   position: relative;
   width: 100%;
   list-style: none;
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
+  /* border-top-left-radius: 30px; */
+  /* border-bottom-left-radius: 30px; */
 }
 
 .navigation ul li:hover,
@@ -114,7 +115,7 @@ body {
   width: 50px;
   height: 50px;
   background-color: transparent;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   box-shadow: 35px 35px 0 10px var(--white);
   pointer-events: none;
 }
@@ -128,7 +129,7 @@ body {
   width: 50px;
   height: 50px;
   background-color: transparent;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   box-shadow: 35px -35px 0 10px var(--white);
   pointer-events: none;
 }
