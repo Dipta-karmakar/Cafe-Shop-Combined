@@ -15,16 +15,16 @@ if (isset($message)) {
 
     <section class="flex">
 
-        <a href="dashboard.php" class="logo">Admin<span>Panel</span></a>
+        <a href="dashboard.php" class="logo">Admin Panel</a>
 
         <nav class="navbar">
-            <a href="dashboard.php">home</a>
-            <a href="products.php">products</a>
-            <a href="placed_orders.php">orders</a>
-            <a href="admin_accounts.php">admins</a>
-            <a href="users_accounts.php">users</a>
-            <a href="employee_accounts.php">employees</a>
-            <a href="messages.php">messages</a>
+            <a href="dashboard.php">Home</a>
+            <a href="admin_accounts.php">Admins</a>
+            <a href="employee_accounts.php">Employees</a>
+            <a href="users_accounts.php">Users</a>
+            <a href="products.php">Products</a>
+            <a href="placed_orders.php">Orders</a>
+            <a href="messages.php">Messages</a>
         </nav>
 
         <div class="icons">

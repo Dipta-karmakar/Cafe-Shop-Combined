@@ -4,7 +4,7 @@ include '../components/connect.php';
 
 session_start();
 
-$admin_id = $_SESSION['admin_id'];
+$admin_id = $_SESSION['user_id'];
 
 if (!isset($admin_id)) {
    header('location:admin_login.php');
@@ -12,9 +12,13 @@ if (!isset($admin_id)) {
 
 if (isset($_GET['delete'])) {
    $delete_id = $_GET['delete'];
-   $delete_admin = $conn->prepare("DELETE FROM `all_users` WHERE id = ?");
-   $delete_admin->execute([$delete_id]);
-   header('location:admin_accounts.php');
+   $delete_users = $conn->prepare("DELETE FROM `all_users` WHERE id = ?");
+   $delete_users->execute([$delete_id]);
+   $delete_order = $conn->prepare("DELETE FROM `orders` WHERE user_id = ?");
+   $delete_order->execute([$delete_id]);
+   $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
+   $delete_cart->execute([$delete_id]);
+   header('location:users_accounts.php');
 }
 
 ?>
@@ -26,13 +30,14 @@ if (isset($_GET['delete'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>admins accounts</title>
+    <title>users accounts</title>
 
+    <!-- font awesome cdn link  -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
+    <!-- custom css file link  -->
     <link rel="stylesheet" href="../css/dashboard_style.css">
     <link rel="stylesheet" href="../css/table.css">
-
 
 </head>
 
@@ -40,18 +45,17 @@ if (isset($_GET['delete'])) {
 
     <?php include '../components/admin_header.php' ?>
 
-    <!-- admins accounts section starts  -->
+    <!-- user accounts section starts  -->
 
     <section class="accounts">
 
-        <h1 class="heading">Admin Management</h1>
+        <h1 class="heading">User Management</h1>
 
         <div class="table_header">
-            <p>Admin Details</p>
+            <p>User Details</p>
             <div>
-                <!-- <input placeholder="admin name">
-                <button class="add_new">search</button> -->
-                <a href="register_admin.php"><button class="add_new">Add Admin</button></a>
+                <input placeholder="customer name">
+                <button class="add_new">search</button>
             </div>
         </div>
 
@@ -62,6 +66,8 @@ if (isset($_GET['delete'])) {
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
+                        <th>Email</th>
+                        <th>address</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -74,8 +80,10 @@ if (isset($_GET['delete'])) {
                ?>
                     <tr>
                         <td><span><?= $fetch_accounts['id']; ?></span></td>
-                        <td><span><?= $fetch_accounts['username']; ?></span></td>
-                        <td><a href="admin_accounts.php?delete=<?= $fetch_accounts['id']; ?>"
+                        <td><span><?= $fetch_accounts['username']; ?></td>
+                        <td><span><?= $fetch_accounts['email']; ?></td>
+                        <td><span><?= $fetch_accounts['address']; ?></td>
+                        <td><a href="users_accounts.php?delete=<?= $fetch_accounts['id']; ?>"
                                 onclick="return confirm('delete this account?');"><button><i
                                         class="fa-solid fa-trash"></i></button></a></td>
                     </tr>
@@ -91,7 +99,7 @@ if (isset($_GET['delete'])) {
 
     </section>
 
-    <!-- admins accounts section ends -->
+    <!-- user accounts section ends -->
 
     <!-- custom js file link  -->
     <script src="../js/admin_script.js"></script>
