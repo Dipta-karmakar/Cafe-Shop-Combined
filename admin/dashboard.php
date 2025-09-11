@@ -66,7 +66,14 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
-
+                <li>
+                    <a href="admin_accounts.php">
+                        <span class="icon">
+                            <ion-icon name="accessibility-outline"></ion-icon>
+                        </span>
+                        <span class="title">admins</span>
+                    </a>
+                </li>
                 <li>
                     <a href="products.php">
                         <span class="icon">
@@ -85,14 +92,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                     </a>
                 </li>
 
-                <li>
-                    <a href="admin_accounts.php">
-                        <span class="icon">
-                            <ion-icon name="accessibility-outline"></ion-icon>
-                        </span>
-                        <span class="title">admins</span>
-                    </a>
-                </li>
+
 
                 <li>
                     <a href="employee_accounts.php">
