@@ -28,8 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows === 1) {
             $row = $result->fetch_assoc();
 
-            // ✅ verify password (your sample passwords are not hashed yet)
-            if (password_verify($password, $row["password"]) || $password === $row["password"]) {
+            // ✅ verify hashed password
+            if (password_verify($password, $row["password"])) {
                 $_SESSION["username"] = $row["username"];
                 $_SESSION["user_id"] = $row["id"];
                 $_SESSION["type"] = $row["type"];
@@ -37,11 +37,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // ✅ redirect by type
                 if ($row["type"] === "admin") {
                     header("Location: admin/dashboard.php");
-
-
-
                 } elseif ($row["type"] === "employee") {
                     header("Location: employee_dashboard.php");
+                } elseif ($row["type"] === "user") {
+                    header("Location: customer/customer_dashboard.php");
                 } else {
                     header("Location: home.php");
                 }
@@ -59,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
+
 
 
 <!DOCTYPE html>
