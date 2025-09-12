@@ -7,35 +7,34 @@ session_start();
 $admin_id = $_SESSION['user_id'];
 
 if (!isset($admin_id)) {
-   header('location:admin_login.php');
+   header('location:../login.php');
    exit;
 }
 
 if (isset($_POST['submit'])) {
+   $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+   $pass = $_POST['pass'];
+   $cpass = $_POST['cpass'];
 
-   $name = $_POST['name'];
-   $name = filter_var($name, FILTER_SANITIZE_STRING);
-   $pass = sha1($_POST['pass']);
-   $pass = filter_var($pass, FILTER_SANITIZE_STRING);
-   $cpass = sha1($_POST['cpass']);
-   $cpass = filter_var($cpass, FILTER_SANITIZE_STRING);
-
-   $select_user = $conn->prepare("SELECT * FROM `all_users` WHERE username = ?");
+   $select_user = $conn->prepare("SELECT * FROM `all_users` WHERE username = ?  ");
    $select_user->execute([$name]);
 
    if ($select_user->rowCount() > 0) {
       $message[] = 'Username already exists!';
    } else {
-      if ($pass != $cpass) {
+      if ($pass !== $cpass) {
          $message[] = 'Confirm password not matched!';
       } else {
-         // Insert new admin into all_users
+         // ✅ Secure hash
+         $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
+
          $insert_user = $conn->prepare("INSERT INTO `all_users` (username, password, type) VALUES (?, ?, ?)");
-         $insert_user->execute([$name, $cpass, 'admin']);
+         $insert_user->execute([$name, $hashedPassword, 'admin']);
          $message[] = 'New admin registered!';
       }
    }
 }
+
 
 ?>
 

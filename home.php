@@ -83,7 +83,7 @@ include 'components/add_cart.php';
                         <a href="menu.html" class="btn">see menus</a>
                     </div>
                     <div class="image">
-                        <img src="images/home-img-3.png" alt="">
+                        <img src="images/h4.png" alt="">
                     </div>
                 </div>
 

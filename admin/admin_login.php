@@ -11,7 +11,7 @@ if (isset($_POST['submit'])) {
    $pass = sha1($_POST['pass']);
    $pass = filter_var($pass, FILTER_SANITIZE_STRING);
 
-   $select_admin = $conn->prepare("SELECT * FROM `admin` WHERE name = ? AND password = ?");
+   $select_admin = $conn->prepare("SELECT * FROM `all_users` WHERE username = ? AND password = ?");
    $select_admin->execute([$name, $pass]);
 
    if ($select_admin->rowCount() > 0) {

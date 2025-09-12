@@ -4,10 +4,10 @@ include '../components/connect.php';
 
 session_start();
 
-$admin_id = $_SESSION['admin_id'];
+$admin_id = $_SESSION['user_id'];
 
 if (!isset($admin_id)) {
-   header('location:admin_login.php');
+   header('location: ../login.php');
 }
 
 if (isset($_GET['delete'])) {
@@ -67,7 +67,7 @@ if (isset($_GET['delete'])) {
                 </thead>
                 <tbody>
                     <?php
-               $select_account = $conn->prepare("SELECT * FROM `all_users`");
+               $select_account = $conn->prepare("SELECT * FROM `all_users`where type='admin'");
                $select_account->execute();
                if ($select_account->rowCount() > 0) {
                   while ($fetch_accounts = $select_account->fetch(PDO::FETCH_ASSOC)) {
