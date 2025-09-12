@@ -100,24 +100,21 @@ if (isset($_GET['delete'])) {
                         <td><?= htmlspecialchars($fetch_accounts['sex']); ?></td>
                         <td><?= htmlspecialchars($fetch_accounts['address']); ?></td>
                         <td>
-                            <?php if ($fetch_accounts['id'] == $admin_id): ?>
-                            <!-- Only the logged-in admin can edit their own profile -->
+                            <!-- Edit button for all admins -->
                             <a href="update_profile.php?id=<?= $fetch_accounts['id']; ?>">
                                 <button><i class="fa-solid fa-pen-to-square"></i></button>
                             </a>
-                            <?php else: ?>
-                            <!-- Logged-in admin can delete other admins -->
+
+                            <!-- Delete button (except for self) -->
+                            <?php if ($fetch_accounts['id'] != $admin_id): ?>
                             <a href="admin_accounts.php?delete=<?= $fetch_accounts['id']; ?>"
                                 onclick="return confirm('Delete this account?');">
                                 <button><i class="fa-solid fa-trash"></i></button>
                             </a>
                             <?php endif; ?>
-
-                            <!-- <a href="admin_accounts.php?delete=<?= $fetch_accounts['id']; ?>"
-                                onclick="return confirm('Delete this account?');">
-                                <button><i class="fa-solid fa-trash"></i></button>
-                            </a> -->
                         </td>
+
+
                     </tr>
                     <?php
                         }

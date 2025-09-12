@@ -229,7 +229,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                         ?>
                         <div>
                             <div class="numbers"><?= $numbers_of_products; ?></div>
-                            <div class="cardName">products added</div>
+                            <div class="cardName">No of products added</div>
                         </div>
 
                         <div class="iconBx">

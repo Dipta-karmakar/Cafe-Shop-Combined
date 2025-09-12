@@ -141,7 +141,7 @@ body {
   left: 300px;
   /* left: 00px; */
   min-height: 100vh;
-  background: slateblue;
+  background: #dadada;
   transition: 0.5s;
 }
 
@@ -225,7 +225,7 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 12px;
-  background-color: red;
+  background-color: #dadada;
 }
 
 .cardBox .card {
@@ -270,7 +270,7 @@ a:active {
 }
 
 .cardBox .card:hover {
-  background: yellow;
+  background: coral;
 }
 
 .cardBox .card:hover .numbers,
@@ -445,79 +445,4 @@ a:active {
 
 .recentCustomers table tr:hover td h4 span {
   color: var(--white);
-}
-
-/* ====================== Responsive Design ========================== */
-@media (max-width: 991px) {
-  .navigation {
-    left: -300px;
-  }
-
-  .navigation.active {
-    width: 300px;
-    left: 0;
-  }
-
-  .main {
-    width: 100%;
-    left: 0;
-  }
-
-  .main.active {
-    left: 300px;
-  }
-
-  .cardBox {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .details {
-    grid-template-columns: 1fr;
-  }
-
-  .recentOrders {
-    overflow-x: auto;
-  }
-
-  .status.inProgress {
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 480px) {
-  .cardBox {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-  .cardHeader h2 {
-    font-size: 20px;
-  }
-
-  .user {
-    min-width: 40px;
-  }
-
-  .navigation {
-    width: 100%;
-    left: -100%;
-    z-index: 1000;
-  }
-
-  .navigation.active {
-    width: 100%;
-    left: 0;
-  }
-
-  .toggle {
-    z-index: 10001;
-  }
-
-  .main.active .toggle {
-    color: #fff;
-    position: fixed;
-    right: 0;
-    left: initial;
-  }
 }

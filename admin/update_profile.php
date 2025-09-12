@@ -2,11 +2,26 @@
 include '../components/connect.php';
 session_start();
 
-$admin_id = $_SESSION['user_id'];
-if (!isset($admin_id)) {
-    header('location:../login.php');
+// $admin_id = $_SESSION['user_id'];
+// if (!isset($admin_id)) {
+//     header('location:../login.php');
+//     exit;
+// }
+
+
+// Get employee ID from URL
+$admin_id = $_GET['id'] ?? null;
+if (!$admin_id) {
+    header('location:admin_accounts.php');
     exit;
 }
+
+
+
+
+
+
+
 
 // Fetch current admin details
 $select_profile = $conn->prepare("SELECT * FROM `all_users` WHERE id = ? && type='admin'");
