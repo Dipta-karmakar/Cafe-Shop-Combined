@@ -2,8 +2,8 @@
 include '../components/connect.php';
 session_start();
 
-// If you want only admins to register users, uncomment this block
-$admin_id = $_SESSION['user_id'] ?? null;
+// If you want only admins to register users
+$admin_id = $_SESSION['user_id'];
 if (!isset($admin_id)) {
    header('location:../login.php');
    exit;
@@ -78,7 +78,7 @@ if (isset($_POST['submit'])) {
             <input type="submit" value="Register now" name="submit" class="btn">
         </form>
 
-        <?php if (!empty($message)): ?>
+        <?php if (!empty($message) && is_array($message)): ?>
         <div class="messages">
             <?php foreach ($message as $msg): ?>
             <p><?= $msg ?></p>
