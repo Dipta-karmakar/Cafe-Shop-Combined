@@ -29,18 +29,30 @@ if (isset($message)) {
 
         <div class="icons">
             <div id="menu-btn" class="fas fa-bars"></div>
-            <div id="user-btn" class="fas fa-user"></div>
+
+            <?php
+            // Fetch admin profile info
+            $select_profile = $conn->prepare("SELECT * FROM `all_users` WHERE id = ?");
+            $select_profile->execute([$admin_id]);
+            $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
+
+            // Determine profile image
+            $profile_img = !empty($fetch_profile['profile_image']) ? $fetch_profile['profile_image'] : 'default.png';
+            ?>
+
+            <!-- Show profile image instead of generic icon -->
+            <div id="user-btn" class="user-icon">
+                <img src="../uploaded_img/<?= htmlspecialchars($profile_img); ?>" alt="profile"
+                    style="width:35px;height:35px;border-radius:50%;object-fit:cover;">
+            </div>
         </div>
 
         <div class="profile">
-            <?php
-         $select_profile = $conn->prepare("SELECT * FROM `all_users` WHERE id = ?");
-         $select_profile->execute([$admin_id]);
-         $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
-         ?>
-            <p><?= $fetch_profile['name']; ?></p>
+            <img src="../uploaded_img/<?= htmlspecialchars($profile_img); ?>" alt="profile"
+                style="width:50px;height:50px;border-radius:50%;margin-bottom:5px;object-fit:cover;">
+            <p><?= htmlspecialchars($fetch_profile['username']); ?></p>
             <a href="update_profile.php" class="btn">update profile</a>
-            <a href="../components/admin_logout.php" onclick="return confirm('logout from this website?');"
+            <a href="../admin/admin_logout.php" onclick="return confirm('logout from this website?');"
                 class="delete-btn">logout</a>
         </div>
 

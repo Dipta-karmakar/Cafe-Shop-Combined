@@ -46,6 +46,8 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
 </head>
 
 <body>
+
+
     <div class="container">
         <div class="navigation">
             <ul>
@@ -122,7 +124,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                 </li>
 
                 <li>
-                    <a href="../components/admin_logout.php" onclick="return confirm('logout from this website?');"
+                    <a href="admin_logout.php" onclick="return confirm('logout from this website?');"
                         class="delete-btn"><span class="icon">
                             <ion-icon name="log-out-outline"></ion-icon>
                         </span>
@@ -138,7 +140,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                 </div>
 
                 <a href="dashboard.php" class="logo">
-                    <h1 style="text-align: center;">Admin<span style="color: blue;">Panel</span></h1>
+                    <h1 style="text-align: center;">Admin Panel</h1>
                 </a>
 
                 <div class="">
@@ -206,7 +208,8 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                         $numbers_of_orders = $select_orders->rowCount();
                         ?>
                         <div>
-                            <div class="numbers"><span>$</span><?= $total_completes + $total_pendings; ?><span>/-</span>
+                            <div class="numbers">
+                                <span>$</span><?= $total_completes + $total_pendings; ?><span>/-</span>
                             </div>
                             <div class="cardName">total orders</div>
                         </div>
@@ -238,12 +241,12 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
 
                     <div class="card">
                         <?php
-                        $select_users = $conn->prepare("SELECT * FROM `all_users`");
+                        $select_users = $conn->prepare("SELECT * FROM `all_users` where type='user'");
                         $select_users->execute();
                         $numbers_of_users = $select_users->rowCount();
                         ?>
                         <div>
-                            <div class="numbers"><?= $numbers_of_products; ?></div>
+                            <div class="numbers"><?= $numbers_of_users; ?></div>
                             <div class="cardName">users accounts</div>
                         </div>
 
@@ -281,7 +284,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                         $numbers_of_employees = $select_employees->rowCount();
                         ?>
                         <div>
-                            <div class="numbers"><?= $numbers_of_admins; ?></div>
+                            <div class="numbers"><?= $numbers_of_employees; ?></div>
                             <div class="cardName">employees accounts</div>
                         </div>
 
@@ -311,14 +314,12 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                     </div>
                 </div>
 
-                <h1 class="heading" style="text-align: center;">----------------------------------------</h1>
-                <h1 class="heading" style="text-align: center;">-----------</h1>
 
                 <div class="cardBox">
 
                     <div class="card">
                         <div>
-                            <div class="numbers">1,504</div>
+                            <div class="numbers">2,089</div>
                             <div class="cardName">Daily Views</div>
                         </div>
 
@@ -329,7 +330,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
 
                     <div class="card">
                         <div>
-                            <div class="numbers">80</div>
+                            <div class="numbers">60</div>
                             <div class="cardName">Sales</div>
                         </div>
 
