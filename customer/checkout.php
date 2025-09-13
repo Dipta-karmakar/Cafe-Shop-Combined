@@ -2,8 +2,14 @@
 session_start();
 include '../components/connect.php';
 
+// Get cart data from database
+$user_id = $_SESSION['user_id'];
+$select_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = ?");
+$select_cart->execute([$user_id]);
+$cart_items = $select_cart->fetchAll(PDO::FETCH_ASSOC);
+
 // Check if cart is empty
-if(empty($_SESSION["cart_item"])) {
+if(empty($cart_items)) {
     header("Location: customer_dashboard.php");
     exit();
 }
@@ -16,14 +22,12 @@ $cart_count = 0;
 $cart_total = 0;
 $total_products = "";
 
-if(isset($_SESSION["cart_item"])) {
-    foreach($_SESSION["cart_item"] as $item) {
-        $cart_count += $item["quantity"];
-        $cart_total += ($item["price"] * $item["quantity"]);
-        $total_products .= $item["name"] . " (" . $item["price"] . " x " . $item["quantity"] . ") - ";
-    }
-    $total_products = rtrim($total_products, " - ");
+foreach($cart_items as $item) {
+    $cart_count += $item["quantity"];
+    $cart_total += ($item["price"] * $item["quantity"]);
+    $total_products .= $item["name"] . " (" . $item["price"] . " x " . $item["quantity"] . ") - ";
 }
+$total_products = rtrim($total_products, " - ");
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -52,8 +56,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $result = $insert_query->execute([$user_id, $name, $number, $email, $payment_method, $address, $total_products, $cart_total]);
             
             if($result) {
-                // Clear the cart after successful order
-                unset($_SESSION["cart_item"]);
+                // Clear the database cart after successful order
+                $clear_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
+                $clear_cart->execute([$user_id]);
+                
                 $order_id = $conn->lastInsertId();
                 $message = "Order placed successfully! Your order ID is: " . $order_id;
             } else {
@@ -162,8 +168,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="order-summary">
         <h2>Order Summary</h2>
         
-        <?php if(isset($_SESSION["cart_item"])): ?>
-            <?php foreach($_SESSION["cart_item"] as $item): ?>
+        <?php if($cart_count > 0): ?>
+            <?php foreach($cart_items as $item): ?>
             <div class="order-item">
                 <div class="item-info">
                     <div class="item-name"><?php echo $item["name"]; ?></div>

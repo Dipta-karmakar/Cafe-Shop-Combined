@@ -4,44 +4,47 @@ include '../components/connect.php';
 
 // Handle cart actions
 if(!empty($_GET["action"])) {
+    $user_id = $_SESSION['user_id'];
+    
     switch($_GET["action"]) {
         case "remove":
-            if(!empty($_SESSION["cart_item"])) {
-                foreach($_SESSION["cart_item"] as $k => $v) {
-                    if($_GET["code"] == $k)
-                        unset($_SESSION["cart_item"][$k]);
-                    if(empty($_SESSION["cart_item"]))
-                        unset($_SESSION["cart_item"]);
-                }
+            if(!empty($_GET["code"])) {
+                $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ? AND pid = ?");
+                $delete_cart->execute([$user_id, $_GET["code"]]);
             }
             break;
         case "empty":
-            unset($_SESSION["cart_item"]);
+            $empty_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
+            $empty_cart->execute([$user_id]);
             break;
         case "update":
-            if(!empty($_SESSION["cart_item"]) && isset($_POST["quantity"])) {
-                foreach($_POST["quantity"] as $code => $qty) {
+            if(isset($_POST["quantity"])) {
+                foreach($_POST["quantity"] as $pid => $qty) {
+                    $qty = intval($qty);
                     if($qty > 0) {
-                        $_SESSION["cart_item"][$code]["quantity"] = $qty;
+                        $update_cart = $conn->prepare("UPDATE `cart` SET quantity = ? WHERE user_id = ? AND pid = ?");
+                        $update_cart->execute([$qty, $user_id, $pid]);
                     } else {
-                        unset($_SESSION["cart_item"][$code]);
+                        $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ? AND pid = ?");
+                        $delete_cart->execute([$user_id, $pid]);
                     }
-                }
-                if(empty($_SESSION["cart_item"])) {
-                    unset($_SESSION["cart_item"]);
                 }
             }
             break;
     }
 }
 
+// Get cart data from database
+$user_id = $_SESSION['user_id'];
+$select_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = ?");
+$select_cart->execute([$user_id]);
+$cart_items = $select_cart->fetchAll(PDO::FETCH_ASSOC);
+
 $cart_count = 0;
 $cart_total = 0;
-if(isset($_SESSION["cart_item"])) {
-    foreach($_SESSION["cart_item"] as $item) {
-        $cart_count += $item["quantity"];
-        $cart_total += ($item["price"] * $item["quantity"]);
-    }
+foreach($cart_items as $item) {
+    $cart_count += $item["quantity"];
+    $cart_total += ($item["price"] * $item["quantity"]);
 }
 ?>
 <!DOCTYPE html>
@@ -70,14 +73,14 @@ function validateQuantity(input) {
 </div>
 
 <div class="container">
-    <?php if(!empty($_SESSION["cart_item"])): ?>
+    <?php if(!empty($cart_items)): ?>
     
     <div class="cart-header">
         <h2>Your Cart (<?php echo $cart_count; ?> items)</h2>
         <div class="cart-actions">
             <form method="post" action="cart.php?action=update" style="display: inline;">
-                <?php foreach($_SESSION["cart_item"] as $k => $v): ?>
-                    <input type="hidden" name="quantity[<?php echo $k; ?>]" value="<?php echo $v['quantity']; ?>">
+                <?php foreach($cart_items as $item): ?>
+                    <input type="hidden" name="quantity[<?php echo $item['pid']; ?>]" value="<?php echo $item['quantity']; ?>">
                 <?php endforeach; ?>
                 <button type="submit" class="update-cart-btn" style="display: none;" id="updateBtn">Update Cart</button>
             </form>
@@ -98,11 +101,11 @@ function validateQuantity(input) {
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($_SESSION["cart_item"] as $item): ?>
+                <?php foreach($cart_items as $item): ?>
                 <tr>
                     <td>
                         <?php if(!empty($item["image"])): ?>
-                            <img src="<?php echo $item["image"]; ?>" alt="<?php echo $item["name"]; ?>" class="product-image">
+                            <img src="../images/<?php echo $item["image"]; ?>" alt="<?php echo $item["name"]; ?>" class="product-image">
                         <?php else: ?>
                             <div style="width: 80px; height: 80px; background-color: #f0f0f0; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">No Image</div>
                         <?php endif; ?>
@@ -111,7 +114,7 @@ function validateQuantity(input) {
                     <td>TK <?php echo $item["price"]; ?></td>
                     <td>
                         <input type="number" 
-                               name="quantity[<?php echo $item["code"]; ?>]" 
+                               name="quantity[<?php echo $item["pid"]; ?>]" 
                                value="<?php echo $item["quantity"]; ?>" 
                                min="0" 
                                class="quantity-input"
@@ -119,7 +122,7 @@ function validateQuantity(input) {
                     </td>
                     <td>TK <?php echo number_format(($item["price"] * $item["quantity"]), 2); ?></td>
                     <td>
-                        <a href="cart.php?action=remove&code=<?php echo $item["code"]; ?>" 
+                        <a href="cart.php?action=remove&code=<?php echo $item["pid"]; ?>" 
                            class="remove-btn" 
                            onclick="return confirm('Are you sure you want to remove this item?')">Remove</a>
                     </td>

@@ -9,31 +9,31 @@ if(!empty($_GET["action"])) {
                 $productByCode = $select_product->fetch(PDO::FETCH_ASSOC);
                 
                 if($productByCode) {
-                    $itemArray = array(
-                        $productByCode["id"] => array(
-                            'name' => $productByCode["name"],
-                            'code' => $productByCode["id"],
-                            'quantity' => $_POST["quantity"],
-                            'price' => $productByCode["price"],
-                            'image' => $productByCode["image"]
-                        )
-                    );
+                    $user_id = $_SESSION['user_id'];
+                    $quantity = intval($_POST["quantity"]);
                     
-                    if(!empty($_SESSION["cart_item"])) {
-                        if(in_array($productByCode["id"], array_keys($_SESSION["cart_item"]))) {
-                            foreach($_SESSION["cart_item"] as $k => $v) {
-                                if($productByCode["id"] == $k) {
-                                    if(empty($_SESSION["cart_item"][$k]["quantity"])) {
-                                        $_SESSION["cart_item"][$k]["quantity"] = 0;
-                                    }
-                                    $_SESSION["cart_item"][$k]["quantity"] += $_POST["quantity"];
-                                }
-                            }
-                        } else {
-                            $_SESSION["cart_item"] = array_merge($_SESSION["cart_item"], $itemArray);
-                        }
+                    // Check if item already exists in cart
+                    $check_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = ? AND pid = ?");
+                    $check_cart->execute([$user_id, $productByCode["id"]]);
+                    
+                    if($check_cart->rowCount() > 0) {
+                        // Update existing cart item
+                        $existing_item = $check_cart->fetch(PDO::FETCH_ASSOC);
+                        $new_quantity = $existing_item['quantity'] + $quantity;
+                        
+                        $update_cart = $conn->prepare("UPDATE `cart` SET quantity = ? WHERE user_id = ? AND pid = ?");
+                        $update_cart->execute([$new_quantity, $user_id, $productByCode["id"]]);
                     } else {
-                        $_SESSION["cart_item"] = $itemArray;
+                        // Insert new cart item
+                        $insert_cart = $conn->prepare("INSERT INTO `cart` (user_id, pid, name, price, quantity, image) VALUES (?, ?, ?, ?, ?, ?)");
+                        $insert_cart->execute([
+                            $user_id,
+                            $productByCode["id"],
+                            $productByCode["name"],
+                            $productByCode["price"],
+                            $quantity,
+                            $productByCode["image"]
+                        ]);
                     }
                     
                     echo '<div class="success-message">Product added to cart successfully!</div>';
@@ -41,6 +41,16 @@ if(!empty($_GET["action"])) {
             }
             break;
     }
+}
+
+// Get cart count from database
+$cart_count = 0;
+if(isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+    $cart_count_query = $conn->prepare("SELECT SUM(quantity) as total_quantity FROM `cart` WHERE user_id = ?");
+    $cart_count_query->execute([$user_id]);
+    $cart_count_result = $cart_count_query->fetch(PDO::FETCH_ASSOC);
+    $cart_count = $cart_count_result['total_quantity'] ?? 0;
 }
 
 // Handle search
@@ -57,8 +67,8 @@ if(isset($_GET['search']) && !empty($_GET['search'])) {
     <div>
         <a href="cart.php" class="cart-link">
             View Cart 
-            <?php if(isset($_SESSION["cart_item"]) && count($_SESSION["cart_item"]) > 0): ?>
-                (<?php echo array_sum(array_column($_SESSION["cart_item"], 'quantity')); ?>)
+            <?php if($cart_count > 0): ?>
+                (<?php echo $cart_count; ?>)
             <?php endif; ?>
         </a>
     </div>
