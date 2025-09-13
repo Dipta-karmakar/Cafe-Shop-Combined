@@ -1,4 +1,4 @@
-{\rtf1}<?php
+<?php
 session_start();
 include '../components/connect.php';
 
