@@ -494,7 +494,7 @@ section {
 }
 
 .products .box-container .box:hover .fa-eye {
-  left: 1rem;
+  /* left: 1rem; */
 }
 
 .products .box-container .box:hover .fa-shopping-cart {

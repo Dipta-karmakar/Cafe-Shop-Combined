@@ -1,26 +1,30 @@
 <?php
-
 include '../components/connect.php';
-
 session_start();
 
 $admin_id = $_SESSION['user_id'];
-
 if (!isset($admin_id)) {
- header('location:../login.php');
+    header('location:../login.php');
+    exit;
 }
 
 if (isset($_GET['delete'])) {
-   $delete_id = $_GET['delete'];
-   $delete_users = $conn->prepare("DELETE FROM `all_users` WHERE id = ?");
-   $delete_users->execute([$delete_id]);
-   $delete_order = $conn->prepare("DELETE FROM `orders` WHERE user_id = ?");
-   $delete_order->execute([$delete_id]);
-   $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
-   $delete_cart->execute([$delete_id]);
-   header('location:users_accounts.php');
-}
+    $delete_id = $_GET['delete'];
 
+    // Delete user account
+    $delete_users = $conn->prepare("DELETE FROM `all_users` WHERE id = ?");
+    $delete_users->execute([$delete_id]);
+
+    // Delete related orders and cart items
+    $delete_order = $conn->prepare("DELETE FROM `orders` WHERE user_id = ?");
+    $delete_order->execute([$delete_id]);
+
+    $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
+    $delete_cart->execute([$delete_id]);
+
+    header('location:users_accounts.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -30,25 +34,18 @@ if (isset($_GET['delete'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>users accounts</title>
+    <title>Users Accounts</title>
 
-    <!-- font awesome cdn link  -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-
-    <!-- custom css file link  -->
     <link rel="stylesheet" href="../css/dashboard_style.css">
     <link rel="stylesheet" href="../css/table.css">
-
 </head>
 
 <body>
 
-    <?php include '../components/admin_header.php' ?>
-
-    <!-- user accounts section starts  -->
+    <?php include '../components/admin_header.php'; ?>
 
     <section class="accounts">
-
         <h1 class="heading">User Management</h1>
 
         <div class="table_header">
@@ -60,51 +57,64 @@ if (isset($_GET['delete'])) {
             </div>
         </div>
 
-        </div>
         <div>
             <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
+                        <th>Profile</th>
+                        <th>Username</th>
                         <th>Email</th>
-                        <th>address</th>
+                        <th>Number</th>
+                        <th>Phone</th>
+                        <th>Age</th>
+                        <th>Sex</th>
+                        <th>Address</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-               $select_account = $conn->prepare("SELECT * FROM `all_users` WHERE type='user'");
-               $select_account->execute();
-               if ($select_account->rowCount() > 0) {
-                  while ($fetch_accounts = $select_account->fetch(PDO::FETCH_ASSOC)) {
-               ?>
+                $select_account = $conn->prepare("SELECT * FROM `all_users` WHERE type='user'");
+                $select_account->execute();
+                if ($select_account->rowCount() > 0) {
+                    while ($fetch_accounts = $select_account->fetch(PDO::FETCH_ASSOC)) {
+                ?>
                     <tr>
-                        <td><span><?= $fetch_accounts['id']; ?></span></td>
-                        <td><span><?= $fetch_accounts['username']; ?></td>
-                        <td><span><?= $fetch_accounts['email']; ?></td>
-                        <td><span><?= $fetch_accounts['address']; ?></td>
-                        <td><a href="users_accounts.php?delete=<?= $fetch_accounts['id']; ?>"
-                                onclick="return confirm('delete this account?');"><button><i
-                                        class="fa-solid fa-trash"></i></button></a></td>
+                        <td><?= $fetch_accounts['id']; ?></td>
+                        <td>
+                            <img src="../uploaded_img/<?= htmlspecialchars($fetch_accounts['profile_image']); ?>"
+                                alt="profile" style="width:50px;height:50px;border-radius:50%;">
+                        </td>
+                        <td><?= htmlspecialchars($fetch_accounts['username']); ?></td>
+                        <td><?= htmlspecialchars($fetch_accounts['email']); ?></td>
+                        <td><?= htmlspecialchars($fetch_accounts['number']); ?></td>
+                        <td><?= htmlspecialchars($fetch_accounts['phone']); ?></td>
+                        <td><?= htmlspecialchars($fetch_accounts['age']); ?></td>
+                        <td><?= htmlspecialchars($fetch_accounts['sex']); ?></td>
+                        <td><?= htmlspecialchars($fetch_accounts['address']); ?></td>
+                        <td>
+                            <a href="update_user_profile.php?id=<?= $fetch_accounts['id']; ?>">
+                                <button><i class="fa-solid fa-pen-to-square"></i></button>
+                            </a>
+                            <a href="users_accounts.php?delete=<?= $fetch_accounts['id']; ?>"
+                                onclick="return confirm('Delete this account?');">
+                                <button><i class="fa-solid fa-trash"></i></button>
+                            </a>
+                        </td>
                     </tr>
                     <?php
-                  }
-               } else {
-                  echo '<p class="empty">no accounts available</p>';
-               }
-               ?>
+                    }
+                } else {
+                    echo '<tr><td colspan="10" class="empty">No user accounts available</td></tr>';
+                }
+                ?>
                 </tbody>
             </table>
         </div>
-
     </section>
 
-    <!-- user accounts section ends -->
-
-    <!-- custom js file link  -->
     <script src="../js/admin_script.js"></script>
-
 </body>
 
 </html>
