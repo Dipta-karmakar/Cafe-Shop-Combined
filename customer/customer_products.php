@@ -36,7 +36,7 @@ if(!empty($_GET["action"])) {
                         $_SESSION["cart_item"] = $itemArray;
                     }
                     
-                    echo '<div style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 20px; text-align: center;">Product added to cart successfully!</div>';
+                    echo '<div class="success-message">Product added to cart successfully!</div>';
                 }
             }
             break;
@@ -53,9 +53,9 @@ if(isset($_GET['search']) && !empty($_GET['search'])) {
 ?>
 
 <!-- Cart and Search Section -->
-<div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0; padding: 0 20px;">
+<div class="cart-search-section">
     <div>
-        <a href="cart.php" style="background-color: #007bff; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; margin-right: 15px;">
+        <a href="cart.php" class="cart-link">
             View Cart 
             <?php if(isset($_SESSION["cart_item"]) && count($_SESSION["cart_item"]) > 0): ?>
                 (<?php echo array_sum(array_column($_SESSION["cart_item"], 'quantity')); ?>)
@@ -64,21 +64,21 @@ if(isset($_GET['search']) && !empty($_GET['search'])) {
     </div>
     
     <!-- Search Form -->
-    <form method="GET" action="" style="display: flex; align-items: center;">
+    <form method="GET" action="" class="search-form">
         <input type="text" name="search" placeholder="Search products..." 
                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
-               style="padding: 10px; width: 300px; border: 1px solid #ddd; border-radius: 5px; margin-right: 10px;">
-        <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+               class="search-input">
+        <button type="submit" class="search-button">
             Search
         </button>
         <?php if(isset($_GET['search']) && !empty($_GET['search'])): ?>
-            <a href="customer_dashboard.php" style="margin-left: 10px; color: #007bff; text-decoration: none;">Clear</a>
+            <a href="customer_dashboard.php" class="clear-link">Clear</a>
         <?php endif; ?>
     </form>
 </div>
 
 <!-- Products Grid -->
-<div style="padding: 20px;">
+<div class="products-container">
     <?php
     // Fetch products
     if(!empty($whereClause)) {
@@ -90,38 +90,35 @@ if(isset($_GET['search']) && !empty($_GET['search'])) {
     }
     
     if($select_products->rowCount() > 0) {
-        echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">';
+        echo '<div class="products-grid">';
         
         while($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)) {
     ?>
-            <div style="border: 1px solid #cbcbcb; background-color: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div class="product-card">
                 <form method="post" action="customer_dashboard.php?action=add&code=<?php echo $fetch_products["id"]; ?>">
-                    <div style="height: 155px; width: 100%; background-color: #f0f0f0; border: 1px solid #ddd; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+                    <div class="product-image-container">
                         <?php if(!empty($fetch_products["image"])): ?>
-                            <img src="../images/<?php echo $fetch_products["image"]; ?>" alt="<?php echo $fetch_products["name"]; ?>" 
-                                 style="max-height: 100%; max-width: 100%; object-fit: cover;">
+                            <img src="../images/<?php echo $fetch_products["image"]; ?>" alt="<?php echo $fetch_products["name"]; ?>" class="product-image">
                         <?php else: ?>
-                            <span style="color: #999;">No Image</span>
+                            <span class="no-image-text">No Image</span>
                         <?php endif; ?>
                     </div>
                     
-                    <div style="margin: 15px 0 10px; font-size: 18px; font-weight: bold; color: #333;">
+                    <div class="product-name">
                         <?php echo $fetch_products["name"]; ?>
                     </div>
                     
-                    <div style="color: #888; font-size: 14px; margin: 5px 0; text-transform: capitalize;">
+                    <div class="product-category">
                         <?php echo $fetch_products["category"]; ?>
                     </div>
                     
-                    <div style="color: #666; font-size: 16px; margin: 10px 0;">
+                    <div class="product-price">
                         TK <?php echo $fetch_products["price"]; ?>
                     </div>
                     
-                    <div style="margin-top: 15px;">
-                        <input type="number" name="quantity" value="1" min="1" max="10" 
-                               style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 3px; margin-right: 10px;">
-                        <input type="submit" value="Add to Cart" 
-                               style="background-color: #007bff; color: white; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer;">
+                    <div class="product-actions">
+                        <input type="number" name="quantity" value="1" min="1" max="10" class="quantity-input">
+                        <input type="submit" value="Add to Cart" class="add-to-cart-btn">
                     </div>
                 </form>
             </div>
@@ -129,7 +126,7 @@ if(isset($_GET['search']) && !empty($_GET['search'])) {
         }
         echo '</div>';
     } else {
-        echo '<div style="text-align: center; color: #666; font-size: 18px; margin: 50px 0;">';
+        echo '<div class="no-products">';
         if(!empty($searchQuery)) {
             echo 'No products found matching your search.';
         } else {

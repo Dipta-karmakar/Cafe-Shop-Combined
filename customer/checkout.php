@@ -1,11 +1,10 @@
 <?php
 session_start();
-require_once "dbcontroller.php";
-$db_handle = new DBController();
+include '../components/connect.php';
 
 // Check if cart is empty
 if(empty($_SESSION["cart_item"])) {
-    header("Location: products.php");
+    header("Location: customer_dashboard.php");
     exit();
 }
 
@@ -43,25 +42,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Please enter a valid phone number!";
     } else {
         try {
-            // For demonstration, using user_id = 1 (you can modify this based on your authentication system)
-            $user_id = 1;
+            // Use the actual logged-in user ID
+            $user_id = $_SESSION['user_id'];
             
-            // Insert order into database
-            $insert_query = "INSERT INTO orders (user_id, name, number, email, method, address, total_products, total_price, payment_status) 
-                           VALUES ('$user_id', '" . mysqli_real_escape_string($db_handle->connectDB(), $name) . "', 
-                                   '" . mysqli_real_escape_string($db_handle->connectDB(), $number) . "', 
-                                   '" . mysqli_real_escape_string($db_handle->connectDB(), $email) . "', 
-                                   '" . mysqli_real_escape_string($db_handle->connectDB(), $payment_method) . "', 
-                                   '" . mysqli_real_escape_string($db_handle->connectDB(), $address) . "', 
-                                   '" . mysqli_real_escape_string($db_handle->connectDB(), $total_products) . "', 
-                                   '$cart_total', 'pending')";
+            // Insert order into database using PDO prepared statement
+            $insert_query = $conn->prepare("INSERT INTO orders (user_id, name, number, email, method, address, total_products, total_price, payment_status) 
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
             
-            $result = $db_handle->runQuery($insert_query);
+            $result = $insert_query->execute([$user_id, $name, $number, $email, $payment_method, $address, $total_products, $cart_total]);
             
             if($result) {
                 // Clear the cart after successful order
                 unset($_SESSION["cart_item"]);
-                $message = "Order placed successfully! Your order ID is: " . mysqli_insert_id($db_handle->connectDB());
+                $order_id = $conn->lastInsertId();
+                $message = "Order placed successfully! Your order ID is: " . $order_id;
             } else {
                 $error = "Failed to place order. Please try again.";
             }
@@ -91,8 +85,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Order Placed Successfully!</h2>
     <div class="message success"><?php echo $message; ?></div>
     <p>Thank you for your order! You will receive a confirmation email shortly.</p>
-    <a href="products.php" class="continue-shopping">Continue Shopping</a>
-    <a href="orders.php" class="continue-shopping">View My Orders</a>
+    <a href="customer_dashboard.php" class="continue-shopping">Continue Shopping</a>
+    <a href="profile.php" class="continue-shopping">View Profile</a>
 </div>
 <?php else: ?>
 

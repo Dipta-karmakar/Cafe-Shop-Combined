@@ -1,4 +1,32 @@
 
+/* Navigation Header */
+.navigation-header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.back-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    border-radius: 5px;
+}
+
+.back-link:hover {
+    background-color: #0056b3;
+}
+
+.navigation-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
 .profile-card {
     max-width: 400px;
     margin: 2em auto;

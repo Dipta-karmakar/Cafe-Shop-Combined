@@ -1,7 +1,6 @@
 <?php
 session_start();
-require_once("dbcontroller.php");
-$db_handle = new DBController();
+include '../components/connect.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
@@ -9,39 +8,60 @@ if (!isset($_SESSION['user_id'])) {
 }
 $user_id = intval($_SESSION['user_id']);
 
-// Fetch user info
-$user = $db_handle->runQuery("SELECT * FROM all_users WHERE id = $user_id");
-if ($user && count($user) > 0) {
-    $user = $user[0];
-} else {
+// Fetch user info using PDO
+$select_user = $conn->prepare("SELECT * FROM all_users WHERE id = ?");
+$select_user->execute([$user_id]);
+$user = $select_user->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
     die("User not found.");
 }
 
 $success = $error = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['edit_profile'])) {
-        $fields = [
-            'name', 'email', 'number', 'address', 'age', 'sex', 'phone'];
-        $updates = [];
+        $fields = ['name', 'email', 'number', 'address', 'age', 'sex', 'phone'];
+        $update_data = [];
+        $placeholders = [];
+        
         foreach ($fields as $field) {
-            if (isset($_POST[$field])) {
-                $val = mysqli_real_escape_string($db_handle->getConn(), $_POST[$field]);
-                $updates[] = "$field = '$val'";
+            if (isset($_POST[$field]) && !empty($_POST[$field])) {
+                $update_data[] = $field . " = ?";
+                $placeholders[] = $_POST[$field];
             }
         }
+        
+        // Handle password change
+        if (isset($_POST['change_password']) && !empty($_POST['change_password'])) {
+            $update_data[] = "password = ?";
+            $placeholders[] = password_hash($_POST['change_password'], PASSWORD_DEFAULT);
+        }
+        
         // Handle profile image upload
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
             $img_name = basename($_FILES['profile_image']['name']);
             $target = '../images/' . $img_name;
             if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target)) {
-                $updates[] = "profile_image = '" . mysqli_real_escape_string($db_handle->getConn(), $img_name) . "'";
+                $update_data[] = "profile_image = ?";
+                $placeholders[] = $img_name;
             }
         }
-        if ($updates) {
-            $sql = "UPDATE all_users SET ".implode(", ", $updates)." WHERE id = $user_id";
-            mysqli_query($db_handle->getConn(), $sql);
-            $success = "Profile updated successfully.";
-            $user = $db_handle->runQuery("SELECT * FROM all_users WHERE id = $user_id")[0];
+        
+        if (!empty($update_data)) {
+            $placeholders[] = $user_id; // Add user_id for WHERE clause
+            $sql = "UPDATE all_users SET " . implode(", ", $update_data) . " WHERE id = ?";
+            $update_stmt = $conn->prepare($sql);
+            $result = $update_stmt->execute($placeholders);
+            
+            if ($result) {
+                $success = "Profile updated successfully.";
+                // Re-fetch user data
+                $select_user = $conn->prepare("SELECT * FROM all_users WHERE id = ?");
+                $select_user->execute([$user_id]);
+                $user = $select_user->fetch(PDO::FETCH_ASSOC);
+            } else {
+                $error = "Failed to update profile.";
+            }
         }
     }
 }
@@ -51,17 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <title>Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="profile.css" type="text/css" rel="stylesheet" />
+  <link href="customerCSS/profile.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 
+<div class="navigation-header">
+    <a href="customer_dashboard.php" class="back-link">← Back to Dashboard</a>
+    <h1>My Profile</h1>
+</div>
+
 <div class="profile-card">
     <img src="../images/<?php echo htmlspecialchars($user['profile_image']); ?>" alt="Profile Picture">
-    <h2>
-        <?php 
-        //echo htmlspecialchars($user['name']); 
-        ?>
-</h2>
+    <h2><?php echo htmlspecialchars($user['name'] ?? $user['username'] ?? 'User'); ?></h2>
     <div class="profile-details">
         <strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?><br>
         <strong>Number:</strong> <?php echo htmlspecialchars($user['number']); ?><br>
@@ -80,11 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="file" id="profile_image" name="profile_image" accept="image/*"><br><br>
 
         <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" value="
-        <?php 
-        //echo htmlspecialchars($user['name']); 
-        ?>"
-         required><br><br>
+        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($user['name'] ?? $user['username'] ?? ''); ?>" required><br><br>
 
         <label for="email">Email:</label><br>
         <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>"><br><br>
@@ -94,11 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         <label for="change_password">Change Password:</label><br>
-        <input type="password" id="change_password" name="change_password"value="
-        <?php
-        // echo htmlspecialchars($user['change_password']);
-        
-        ?>"><br><br>
+        <input type="password" id="change_password" name="change_password" placeholder="Leave blank to keep current password"><br><br>
 
         <label for="address">Address:</label><br>
         <textarea id="address" name="address" rows="3" cols="40"><?php echo htmlspecialchars($user['address']); ?></textarea><br><br>

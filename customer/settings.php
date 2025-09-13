@@ -1,7 +1,6 @@
 <?php
 session_start();
-require_once("dbcontroller.php");
-$db_handle = new DBController();
+include '../components/connect.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
@@ -9,32 +8,55 @@ if (!isset($_SESSION['user_id'])) {
 }
 $user_id = intval($_SESSION['user_id']);
 
-// Fetch current user info
-$user = $db_handle->runQuery("SELECT * FROM all_users WHERE id = $user_id");
-if ($user && count($user) > 0) {
-    $user = $user[0];
-} else {
+// Fetch current user info using PDO
+$select_user = $conn->prepare("SELECT * FROM all_users WHERE id = ?");
+$select_user->execute([$user_id]);
+$user = $select_user->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
     die("User not found.");
 }
 
 $success = $error = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_address'])) {
-        $address = mysqli_real_escape_string($db_handle->getConn(), $_POST['address']);
-        $update_address = "UPDATE all_users SET address = '$address' WHERE id = $user_id";
-        mysqli_query($db_handle->getConn(), $update_address);
-        $success = "Address updated successfully.";
-        $user = $db_handle->runQuery("SELECT * FROM all_users WHERE id = $user_id")[0];
+        try {
+            $address = $_POST['address'];
+            $update_address = $conn->prepare("UPDATE all_users SET address = ? WHERE id = ?");
+            $result = $update_address->execute([$address, $user_id]);
+            
+            if ($result) {
+                $success = "Address updated successfully.";
+                // Re-fetch user data
+                $select_user = $conn->prepare("SELECT * FROM all_users WHERE id = ?");
+                $select_user->execute([$user_id]);
+                $user = $select_user->fetch(PDO::FETCH_ASSOC);
+            } else {
+                $error = "Failed to update address.";
+            }
+        } catch (Exception $e) {
+            $error = "An error occurred while updating address.";
+        }
     }
+    
     if (isset($_POST['update_password'])) {
         $password = $_POST['password'];
         $confirm = $_POST['confirm_password'];
+        
         if ($password === $confirm && !empty($password)) {
-            $password = mysqli_real_escape_string($db_handle->getConn(), $password);
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $update_pass = "UPDATE all_users SET password = '$hashed' WHERE id = $user_id";
-            mysqli_query($db_handle->getConn(), $update_pass);
-            $success = "Password updated.";
+            try {
+                $hashed = password_hash($password, PASSWORD_DEFAULT);
+                $update_pass = $conn->prepare("UPDATE all_users SET password = ? WHERE id = ?");
+                $result = $update_pass->execute([$hashed, $user_id]);
+                
+                if ($result) {
+                    $success = "Password updated successfully.";
+                } else {
+                    $error = "Failed to update password.";
+                }
+            } catch (Exception $e) {
+                $error = "An error occurred while updating password.";
+            }
         } else {
             $error = "Passwords do not match or are empty.";
         }
@@ -46,9 +68,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <title>Settings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="style.css" type="text/css" rel="stylesheet" />
+    <link href="customerCSS/settings.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
+
+<div class="navigation-header">
+    <a href="customer_dashboard.php" class="back-link">← Back to Dashboard</a>
+    <h1>Account Settings</h1>
+</div>
+
 <div class="settings-container">
     <h2>Account Settings</h2>
     <?php if ($success) { echo '<div class="success">'.$success.'</div>'; } ?>

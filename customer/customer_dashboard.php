@@ -41,7 +41,8 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
     <title>Customer Dashboard</title>
 
     <link rel="stylesheet" href="../css/nav.css">
-
+    <link rel="stylesheet" href="customerCSS/customer_dashboard.css">
+    <link rel="stylesheet" href="customerCSS/customer_products.css">
 
 </head>
 
@@ -51,9 +52,9 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
             <ul>
                 <li>
                     <a href="#">
-                        <img style="width: 80px;" src="../images/08052021-05_generated-removebg-preview.png"
+                        <img class="logo-image" src="../images/08052021-05_generated-removebg-preview.png"
                             alt="Cozy Cafe">
-                        <P style="font-size: 1.8rem; margin-top: 1.2rem;"><span class="title">Cozy Cafe</span></P>
+                        <P class="logo-text"><span class="title">Cozy Cafe</span></P>
 
                     </a>
 
@@ -121,7 +122,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
                 </div>
 
                 <a href="customer_dashboard.php" class="logo">
-                    <h1 style="text-align: center;">Customer<span style="color: blue;">Panel</span></h1>
+                    <h1 class="customer-panel-title">Customer<span class="panel-accent">Panel</span></h1>
                 </a>
 
                 <div class="">
@@ -135,7 +136,7 @@ $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
             </div>
 
             <section class="dashboard">
-                <h1 class="heading" style="text-align: center; margin-top:3rem">CUSTOMER DASHBOARD</h1>
+                <h1 class="heading dashboard-heading">CUSTOMER DASHBOARD</h1>
                 
                 <?php include 'customer_products.php'; ?>
 
