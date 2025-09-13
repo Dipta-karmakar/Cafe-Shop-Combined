@@ -20,7 +20,7 @@ if (!$user) {
 $success = $error = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['edit_profile'])) {
-        $fields = ['name', 'email', 'number', 'address', 'age', 'sex', 'phone'];
+        $fields = ['username', 'email', 'number', 'address', 'age', 'sex', 'phone'];
         $update_data = [];
         $placeholders = [];
         
@@ -82,10 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="profile-card">
     <img src="../images/<?php echo htmlspecialchars($user['profile_image']); ?>" alt="Profile Picture">
-    <h2><?php echo htmlspecialchars($user['name'] ?? $user['username'] ?? 'User'); ?></h2>
+    <h2><?php echo htmlspecialchars($user['username'] ?? 'User'); ?></h2>
     <div class="profile-details">
         <strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?><br>
-        <strong>Number:</strong> <?php echo htmlspecialchars($user['number']); ?><br>
         <strong>Address:</strong> <?php echo htmlspecialchars($user['address']); ?><br>
         <strong>Age:</strong> <?php echo htmlspecialchars($user['age']); ?><br>
         <strong>Sex:</strong> <?php echo htmlspecialchars($user['sex']); ?><br>
@@ -100,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="profile_image">Profile Image:</label><br>
         <input type="file" id="profile_image" name="profile_image" accept="image/*"><br><br>
 
-        <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($user['name'] ?? $user['username'] ?? ''); ?>" required><br><br>
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username'] ?? ''); ?>" required><br><br>
 
         <label for="email">Email:</label><br>
         <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>"><br><br>
